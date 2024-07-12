@@ -323,13 +323,14 @@ def extract_loci(loci, sequences, signals=None, in_signals=None, chroms=None,
 	in_signals = _load_signals(in_signals)
 
 	desc = "Loading Loci"
-	d = not verbose
+	disable = not verbose
 
 	max_width = max(in_width, out_width)
-	for chrom, start, end in tqdm(loci.values, disable=d, desc=desc):
+	for locus in tqdm(loci.itertuples(), disable=disable, desc=desc):
+		chrom, start, end = locus.chrom, locus.start, locus.end
 		mid = start + (end - start) // 2
-		start = mid - max(out_width, in_width) - max_jitter
-		end = mid + max(out_width, in_width) + max_jitter
+		start = mid - max_width - max_jitter
+		end = mid + max_width + max_jitter
 
 		if isinstance(sequences, dict):
 			chrom_length = sequences[chrom].shape[-1]
